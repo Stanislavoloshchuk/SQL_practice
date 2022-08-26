@@ -25,44 +25,121 @@ For example, if two or more people are named 'John' in the first_name column the
 If only 1 person is named 'Leo' then include them in the output.
 */
 
+SELECT first_name
+FROM patients
+GROUP BY first_name
+HAVING COUNT(first_name) = 1
+ORDER BY COUNT(first_name) asc;
 
+or
+
+SELECT first_name
+FROM patients
+GROUP BY first_name
+HAVING COUNT(first_name) = 1
+
+/*
+Show patient_id and first_name from patients where their first_name start and ends with 's' and is at least 6 characters long.
+*/
+
+SELECT patient_id, first_name
+FROM patients
+WHERE first_name like 's____%s';
+
+or
+
+SELECT
+  patient_id,
+  first_name
+FROM patients
+WHERE first_name LIKE 's____%s';
 
 
 /*
-
+Show patient_id, first_name, last_name from patients whos primary_diagnosis is 'Dementia'.
+Primary diagnosis is stored in the admissions table.
 */
 
+SELECT patients.patient_id, patients.first_name, patients.last_name
+FROM patients
+JOIN admissions
+ON patients.patient_id=admissions.patient_id
+WHERE primary_diagnosis is 'Dementia';
+
+or
+
+SELECT
+  patients.patient_id,
+  first_name,
+  last_name
+FROM patients
+  JOIN admissions ON admissions.patient_id = patients.patient_id
+WHERE primary_diagnosis = 'Dementia';
 
 
 /*
-
+Display every patient's first_name.
+Order the list by the length of each name and then by alphbetically
 */
 
+SELECT first_name
+from patients
+order by 
+	LEN(first_name), first_name;
+  
+  or
+
+SELECT first_name
+FROM patients
+order by
+  len(first_name),
+  first_name;
 
 
 /*
-
+Show the total amount of male patients and the total amount of female patients in the patients table.
+Display the two results in the same row.
 */
 
+SELECT
+	(SELECT count(*) gender from patients where gender = 'F') AS male_patients,
+  (SELECT COUNT(*) gender FROM patients where gender = 'M') AS female_patients;
 
 
 /*
-
+Show first and last name, allergies from patients which have allergies to either 'Penicillin' or 'Morphine'. 
+Show results ordered ascending by allergies then by first_name then by last_name.
 */
 
+SELECT first_name, last_name, allergies
+FROM patients
+where allergies in ('Morphine', 'Penicillin')
+order by
+	allergies, 
+	first_name, 
+	last_name;
 
 
 /*
-
+Show patient_id, primary_diagnosis from admissions. Find patients admitted multiple times for the same primary_diagnosis.
 */
 
+SELECT patient_id, primary_diagnosis
+from admissions
+where attending_physician_id
+Group by patient_id, primary_diagnosis
+having count(*) > 1;
 
+or
 
-/*
-
-*/
-
-
+SELECT
+  patient_id,
+  primary_diagnosis
+FROM admissions
+GROUP BY
+  patient_id,
+  primary_diagnosis
+HAVING COUNT(*) > 1;
 
 /*
 
